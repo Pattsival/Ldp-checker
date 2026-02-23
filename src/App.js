@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, AlertTriangle, Filter, X, FileText, TrendingUp, DollarSign, ChevronDown } from 'lucide-react';
+import { Search, AlertTriangle, Filter, X, FileText, TrendingUp, DollarSign } from 'lucide-react';
 
 // ===== ฟังก์ชันหลัก =====
 const editDistance = (str1, str2) => {
@@ -68,12 +68,6 @@ const filterProjects = (projects, filters) => {
   });
 };
 
-const calculateBudgetStats = (projects, year) => {
-  const total = projects.reduce((sum, p) => sum + (p.budget[year] || 0), 0);
-  const avg = projects.length > 0 ? total / projects.length : 0;
-  return { total, avg };
-};
-
 const calculateTotalBudget = (projects) => {
   const years = [2566, 2567, 2568, 2569, 2570];
   const budgetByYear = {};
@@ -126,8 +120,8 @@ const LocalDevPlanChecker = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
 
-  // ข้อมูลโครงการ (ใส่ของคุณเองตรงนี้)
-  const projects = [
+  // ✅ FIX: wrap projects ใน useMemo เพื่อไม่ให้ re-create ทุก render
+  const projects = useMemo(() => [
 {
 
 id: 1,
@@ -258,12 +252,6 @@ fiscal: '2566'
 
 },
 
-
-
-
-
-// ยุทธศาสตร์ที่ 2 - การศึกษา ศาสนา วัฒนธรรม
-
 {
 
 id: 11,
@@ -316,10 +304,6 @@ fiscal: '2566'
 
 },
 
-
-
-// ยุทธศาสตร์ที่ 3 - สวัสดิการสังคม
-
 {
 
 id: 13,
@@ -345,10 +329,6 @@ dept: 'กองสวัสดิการสังคม',
 fiscal: '2566'
 
 },
-
-
-
-// ยุทธศาสตร์ที่ 4 - พัฒนากายภาพเมือง
 
 {
 
@@ -376,10 +356,6 @@ fiscal: '2566'
 
 },
 
-
-
-// ยุทธศาสตร์ที่ 5 - ความมั่นคง
-
 {
 
 id: 15,
@@ -405,10 +381,6 @@ dept: 'กองสวัสดิการสังคมและงประ�
 fiscal: '2568'
 
 },
-
-
-
-// ยุทธศาสตร์ที่ 6 - การบริหารจัดการที่ดี
 
 {
 
@@ -1344,7 +1316,8 @@ fiscal: '2567'
 
 }
 
-];
+  ], []);
+
   // คำนวนข้อมูล
   const strategies = useMemo(() => getStrategies(projects), [projects]);
   const departments = useMemo(() => getDepartments(projects), [projects]);
@@ -1597,13 +1570,11 @@ fiscal: '2567'
                   </div>
                   <div className="p-6 overflow-y-auto max-h-[600px]">
                     <div className="space-y-6">
-                      {/* ชื่อโครงการ - เด่นที่สุด */}
                       <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-lg shadow-md">
                         <p className="text-xs font-bold text-blue-100 uppercase tracking-wider mb-2">ชื่อโครงการ</p>
                         <p className="text-lg text-white font-bold leading-relaxed">{currentProject.name}</p>
                       </div>
 
-                      {/* วัตถุประสงค์ */}
                       <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -1612,7 +1583,6 @@ fiscal: '2567'
                         <p className="text-sm text-gray-700 leading-relaxed pl-4">{currentProject.objective}</p>
                       </div>
 
-                      {/* เป้าหมาย */}
                       <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-2 h-2 bg-green-600 rounded-full"></div>
@@ -1621,7 +1591,6 @@ fiscal: '2567'
                         <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line pl-4">{currentProject.target}</p>
                       </div>
 
-                      {/* KPI */}
                       <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
@@ -1630,7 +1599,6 @@ fiscal: '2567'
                         <p className="text-sm text-gray-700 leading-relaxed pl-4">{currentProject.kpi || 'ไม่มีการกำหนด'}</p>
                       </div>
 
-                      {/* ผลที่คาดหวัง */}
                       <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
@@ -1639,13 +1607,11 @@ fiscal: '2567'
                         <p className="text-sm text-gray-700 leading-relaxed pl-4">{currentProject.result}</p>
                       </div>
 
-                      {/* หน่วยงาน */}
                       <div className="bg-gradient-to-r from-slate-100 to-slate-200 p-4 rounded-lg border-2 border-slate-300">
                         <p className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">หน่วยงานรับผิดชอบ</p>
                         <p className="text-base text-slate-900 font-bold">{currentProject.dept}</p>
                       </div>
 
-                      {/* งบประมาณ */}
                       <div className="bg-white p-4 rounded-lg border-2 border-yellow-400 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
                           <DollarSign className="text-yellow-600" size={20} />
